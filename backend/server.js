@@ -4,7 +4,9 @@ const dbConnect = require("./config/db");
 const app = express();
 const port =  3000;
 
+const voteRoutes = require('./routes/vote.routes');
 app.use("/api/user",userRouter);
+app.use("/api/vote", voteRoutes);
 
 app.use("/", function (req,res){
   res.status(500).json({message: "Something went wrong!"});

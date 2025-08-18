@@ -5,8 +5,10 @@ const app = express();
 const port =  3000;
 
 const voteRoutes = require('./routes/vote.routes');
+const commentRoutes = require('./routes/comment.routes');
 app.use("/api/user",userRouter);
 app.use("/api/vote", voteRoutes);
+app.use("/api/comments",commentRoutes);
 
 app.use("/", function (req,res){
   res.status(500).json({message: "Something went wrong!"});

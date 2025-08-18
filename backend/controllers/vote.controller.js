@@ -3,7 +3,6 @@
 2. comment like - comment_id, user_id
 3. reply like - comment_id, user_id,  */
 const vote = require('../models/vote.model');
-const { post } = require('../routes/threadRoutes');
 
 exports.votePosts = async (req,res)=>{
     try{

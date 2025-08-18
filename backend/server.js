@@ -18,10 +18,6 @@ app.use("/", function (req,res){
   res.status(500).json({message: "Something went wrong!"});
 })
 
-app.get("/", (req, res) => {
-  res.send("Server is running and connected to MongoDB!");
-});
-
-app.listen((req,res),port=>{
+app.listen(port, () => {
     console.log(`server running on port ${port}`);
 })

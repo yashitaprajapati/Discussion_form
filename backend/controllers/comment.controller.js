@@ -1,5 +1,5 @@
 const comment = require('../models/comment.model');
-const thread = require('../models/Thread');
+const thread = require('../models/threadModel');
 
 exports.addComment = async (req, res) => {
     try {

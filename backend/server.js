@@ -4,6 +4,8 @@ const dbConnect = require("./config/db");
 const app = express();
 const port =  3000;
 
+app.use(express.json());
+
 const connectDB = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const threadRouter = require("./routes/threadRouter");
@@ -16,9 +18,9 @@ app.use("/api/threads", threadRouter);
 
 connectDB();
 
-app.use("/", function (req,res){
-  res.status(500).json({message: "Something went wrong!"});
-})
+// app.use("/", function (req,res){
+//   res.status(500).json({message: "Something went wrong!"});
+// })
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);

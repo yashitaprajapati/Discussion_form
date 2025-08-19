@@ -7,7 +7,7 @@ const voteSchema = new mongoose.Schema({
     },
     type_of_vote:{
         type:String,
-        enum:["post","reply","comemnt"],
+        enum:["post","reply","comment"],
         required:true
     },
     type_id:{

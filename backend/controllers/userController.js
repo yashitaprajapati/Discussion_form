@@ -3,7 +3,9 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 
 const registerUser = async (req, res) => {
+  try{
   const { firstName, lastName, emailId, password } = req.body;
+  console.log(req.body);
   if (!firstName || !emailId || !password) {
     return res.status(400).send({ message: "Fill all mandatory fields" });
   }
@@ -22,7 +24,6 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
-    const tokenGen = generateToken(newUser)
 
     return res.status(201).json({
       message: "Thank You ! You are Registered Successfully !!",
@@ -34,6 +35,9 @@ const registerUser = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  }
+  }catch(err){
+    console.log(err);
   }
 };
 const loginUser = async (req, res) => {
@@ -54,11 +58,13 @@ const loginUser = async (req, res) => {
     if (!isMatched) {
       return res.status(401).send("Incorrect Password");
     }
-
+    const tokenGen = generateToken(userExists);
     return res.status(200).json({
-      message: "Logged In Successfully"
+      message: "Logged In Successfully",
+      token:tokenGen
     });
-  } catch (err) {
+  } catch (err) 
+  {
     return res.status(500).json({ error: err.message });
   }
 };

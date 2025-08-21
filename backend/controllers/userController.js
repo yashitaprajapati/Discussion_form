@@ -5,7 +5,7 @@ const generateToken = require("../utils/generateToken");
 const registerUser = async (req, res) => {
   try{
   const { firstName, lastName, emailId, password } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   if (!firstName || !emailId || !password) {
     return res.status(400).send({ message: "Fill all mandatory fields" });
   }
@@ -29,8 +29,7 @@ const registerUser = async (req, res) => {
       message: "Thank You ! You are Registered Successfully !!",
       data: {
         firstName,
-        emailId,
-        tokenGen
+        emailId
       },
     });
   } catch (err) {

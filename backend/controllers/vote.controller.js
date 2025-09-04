@@ -1,7 +1,4 @@
-/*vote logic - 3 endpoints -
-1. post like - post_id, user_id
-2. comment like - comment_id, user_id
-3. reply like - comment_id, user_id,  */
+
 const vote = require('../models/vote.model');
 const User = require('../models/userModel');
 

@@ -5,7 +5,6 @@ const generateToken = require("../utils/generateToken");
 const registerUser = async (req, res) => {
   try {
     const { firstName, lastName, emailId, password, role } = req.body;
-    console.log(req.body);
 
     if (!firstName || !emailId || !password) {
       return res.status(400).send({ message: "Fill all mandatory fields" });
@@ -22,10 +21,9 @@ const registerUser = async (req, res) => {
       lastName,
       emailId,
       password: hashedPassword,
-      role: role || "user"
+      role: role || "user",
     });
 
-    // ✅ Generate JWT using your helper
     const token = generateToken(newUser);
 
     return res.status(201).json({
@@ -34,13 +32,14 @@ const registerUser = async (req, res) => {
         firstName: newUser.firstName,
         emailId: newUser.emailId,
         role: newUser.role,
-        token: token 
+        token: token,
       },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
+
 const loginUser = async (req, res) => {
   const { emailId, password } = req.body;
   if (!emailId || !password) {
@@ -59,17 +58,17 @@ const loginUser = async (req, res) => {
     if (!isMatched) {
       return res.status(401).send("Incorrect Password");
     }
+
     const tokenGen = generateToken(userExists);
+
     return res.status(200).json({
       message: "Logged In Successfully",
       role: userExists.role,
-      token:tokenGen
+      token: tokenGen,
     });
-  } catch (err) 
-  {
+  } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
 
 module.exports = { registerUser, loginUser };
- 

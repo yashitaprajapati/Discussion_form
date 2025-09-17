@@ -3,7 +3,8 @@ const User = require("../models/userModel");
 
 const authMiddleware = async (req, res, next) => {
     const { authorization } = req.headers;
-    if (!authorization || !authorization.startsWith("Bearer ")) {
+    if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) { 
+
         return res.status(401).json({ message: "No token provided" });
     }
 
@@ -18,7 +19,12 @@ const authMiddleware = async (req, res, next) => {
             return res.status(404).json({ message: "User Not Found" });
         }
 
-        req.user = userFind;
+        req.user = {
+            id: userFind._id,
+            emailId: userFind.emailId,
+            role: userFind.role  // 👈 confirm ho gaya
+        };
+
         next();
     } catch (err) {
         return res.status(401).json({ message: "Unauthorized User" });

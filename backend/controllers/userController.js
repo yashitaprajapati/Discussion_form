@@ -3,42 +3,42 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 
 const registerUser = async (req, res) => {
-  try{
-  const { firstName, lastName, emailId, password } = req.body;
-  // console.log(req.body);
-  if (!firstName || !emailId || !password) {
-    return res.status(400).send({ message: "Fill all mandatory fields" });
-  }
-
-  const userExists = await User.findOne({ emailId });
-  if (userExists) {
-    return res.status(400).json({ message: "User Already exist" });
-  }
-
   try {
+    const { firstName, lastName, emailId, password, role } = req.body;
+    if (!firstName || !emailId || !password) {
+      return res.status(400).send({ message: "Fill all mandatory fields" });
+    }
+
+    const userExists = await User.findOne({ emailId });
+    if (userExists) {
+      return res.status(400).json({ message: "User Already exist" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       firstName,
       lastName,
       emailId,
       password: hashedPassword,
+      role: role || "user",
     });
-    await newUser.save();
+
+    const token = generateToken(newUser);
 
     return res.status(201).json({
       message: "Thank You ! You are Registered Successfully !!",
       data: {
-        firstName,
-        emailId
+        firstName: newUser.firstName,
+        emailId: newUser.emailId,
+        role: newUser.role,
+        token: token,
       },
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-  }catch(err){
-    console.log(err);
-  }
 };
+
 const loginUser = async (req, res) => {
   const { emailId, password } = req.body;
   if (!emailId || !password) {
@@ -57,13 +57,15 @@ const loginUser = async (req, res) => {
     if (!isMatched) {
       return res.status(401).send("Incorrect Password");
     }
+
     const tokenGen = generateToken(userExists);
+
     return res.status(200).json({
       message: "Logged In Successfully",
-      token:tokenGen
+      role: userExists.role,
+      token: tokenGen,
     });
-  } catch (err) 
-  {
+  } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };

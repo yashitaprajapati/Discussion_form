@@ -12,7 +12,7 @@ export default function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/users/login', { email, password });
+      const res = await api.post('/user/login', { emailId: email, password });
       setAuthToken(res.data.token);
       onLogin(res.data.user);
     } catch (err) {

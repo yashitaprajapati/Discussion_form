@@ -1,10 +1,15 @@
 const express = require('express');
 require("dotenv").config();
-//const dbConnect = require("./config/db");
+const cors = require('cors'); 
+
 const app = express();
 const port =  3000;
-const authMiddleware = require("./middlewares/authMiddleware");
-const roleMiddleware = require("./middlewares/roleMiddleware");
+
+// Add CORS middleware
+app.use(cors({
+  origin: 'http://localhost:3001', 
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -11,7 +11,8 @@ export default function Register({ onRegister }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/users/register', { email, password, name });
+      const [firstName, lastName] = name.split(' ');
+      const res = await api.post('/user/register', { firstName, lastName, emailId: email, password });
       onRegister(res.data.user);
     } catch (err) {
       setError('Registration failed');

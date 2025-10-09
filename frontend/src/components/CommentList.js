@@ -12,8 +12,8 @@ export default function CommentList({ threadId }) {
 
   const handleAddComment = async () => {
     if (!content) return;
-    const res = await api.post('/comments', { threadId, content });
-    setComments([...comments, res.data]);
+    const res = await api.post(`/comments/${threadId}`, { comments: content });
+    setComments([...comments, res.data.comment]);
     setContent('');
   };
 
@@ -23,8 +23,8 @@ export default function CommentList({ threadId }) {
       {comments.map(comment => (
         <Card key={comment._id} sx={{ mb: 1 }}>
           <CardContent>
-            <Typography>{comment.content}</Typography>
-            <Typography variant="caption">By {comment.user?.name || 'Anonymous'}</Typography>
+            <Typography>{comment.text}</Typography>
+            <Typography variant="caption">By {comment.UserID?.name || 'Anonymous'}</Typography>
           </CardContent>
         </Card>
       ))}

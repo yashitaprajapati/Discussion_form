@@ -1,54 +1,45 @@
-import React, { createContext, useState, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate} from 'react-router-dom';
+import ThreadList from './components/ThreadList';
+import ThreadDetail from './components/ThreadDetail';
 import Login from './components/Login';
 import Register from './components/Register';
-import Home from './components/Home';
-import CreateThread from './components/CreateThread';
-import ThreadDetail from './components/ThreadDetail';
-import Navbar from './components/Navbar';
-import './App.css';
+import { AppBar, Toolbar, Button, Typography } from '@mui/material';
+import Profile  from './pages/Profile'
+import axios from 'axios';
 
-// Auth Context
-const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+const API_URL = 'http://localhost:5000'; // Change if your backend runs on another port
 
+export const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const [user, setUser ] = useState(JSON.parse(localStorage.getItem('user')) || null);
-
-  const login = (newToken, userData) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(newToken);
-    setUser (userData);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser (null);
-  };
-
-  const isAuthenticated = !!token;
+  const [user, setUser] = useState(null);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated }}>
-      <Router>
-        <Navbar />
-        <div className="container">
-          <Routes>
-            <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />} />
-            <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
-            <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-            <Route path="/create-thread" element={isAuthenticated ? <CreateThread /> : <Navigate to="/login" />} />
-            <Route path="/thread/:id" element={isAuthenticated ? <ThreadDetail /> : <Navigate to="/login" />} />
-            <Route path="/" element={<Navigate to="/home" />} />
-          </Routes>
-        </div>
-      </Router>
-    </AuthContext.Provider>
+    <Router>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Forum App</Typography>
+          <Button color="inherit" component={Link} to="/">Home</Button>
+          {!user && <Button color="inherit" component={Link} to="/login">Login</Button>}
+          {!user && <Button color="inherit" component={Link} to="/register">Register</Button>}
+          {user && <Button color="inherit" component={Link} to="/profile">{user.name}</Button>} 
+      
+        </Toolbar>
+      </AppBar>
+      <Routes>
+  <Route path="/" element={<Navigate to="/login" />} /> {/* Redirect root to /home */}
+  <Route path="/home" element={<ThreadList />} />
+  <Route path="/thread/:id" element={<ThreadDetail />} />
+  <Route path="/login" element={<Login onLogin={setUser} />} />
+  <Route path="/register" element={<Register onRegister={setUser} />} />
+  <Route path="/profile" element={<Profile user={user} />} /> {/* Add this line */}
+</Routes>
+    </Router>
+    
   );
 }
 

@@ -1,88 +1,33 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useAuth } from '../App';
-import { useNavigate } from 'react-router-dom';
+import { api } from '../App';
+import { TextField, Button, Box, Typography } from '@mui/material';
 
-const Register = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [emailId, setEmailId] = useState('');
+export default function Register({ onRegister }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
     try {
-      const response = await axios.post('/api/user/register', { firstName, lastName, emailId, password });
-      if (response.data.message && response.data.message.includes('Registered Successfully')) {
-        const { tokenGen, user } = response.data.data;
-        login(tokenGen, user);
-        navigate('/home');
-      } else {
-        setError('Registration failed');
-      }
+      const res = await api.post('/users/register', { email, password, name });
+      onRegister(res.data.user);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
-    } finally {
-      setLoading(false);
+      setError('Registration failed');
     }
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      {error && <p className="error">{error}</p>}
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8 }}>
+      <Typography variant="h5" mb={2}>Register</Typography>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>First Name:</label>
-          <input 
-            type="text" 
-            value={firstName} 
-            onChange={(e) => setFirstName(e.target.value)} 
-            required 
-            disabled={loading}
-          />
-        </div>
-        <div className="form-group">
-          <label>Last Name:</label>
-          <input 
-            type="text" 
-            value={lastName} 
-            onChange={(e) => setLastName(e.target.value)} 
-            disabled={loading}
-          />
-        </div>
-        <div className="form-group">
-          <label>Email:</label>
-          <input 
-            type="email" 
-            value={emailId} 
-            onChange={(e) => setEmailId(e.target.value)} 
-            required 
-            disabled={loading}
-          />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            disabled={loading}
-          />
-        </div>
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
-        </button>
+        <TextField label="Name" fullWidth margin="normal" value={name} onChange={e => setName(e.target.value)} />
+        <TextField label="Email" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} />
+        <TextField label="Password" type="password" fullWidth margin="normal" value={password} onChange={e => setPassword(e.target.value)} />
+        {error && <Typography color="error">{error}</Typography>}
+        <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>Register</Button>
       </form>
-    </div>
+    </Box>
   );
-};
-
-export default Register;
+}

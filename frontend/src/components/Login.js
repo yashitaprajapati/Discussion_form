@@ -1,70 +1,34 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useAuth } from '../App';
-import { useNavigate } from 'react-router-dom';
+import { api } from '../App';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import { setAuthToken } from '../api';
 
-const Login = () => {
-  const [emailId, setEmailId] = useState('');
+
+export default function Login({ onLogin }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
     try {
-      const response = await axios.post('/api/user/login', { emailId, password });
-      if (response.data.message === 'Logged In Successfully') {
-        // Backend update needed: Return token like in register. For now, simulate or fetch profile.
-        // Assuming backend now returns { tokenGen, user } after update.
-        const token = response.data.data?.tokenGen || 'simulated-token-for-login'; // Replace with actual
-        const userData = response.data.data?.user || { emailId };
-        login(token, userData);
-        navigate('/home');
-      } else {
-        setError('Login failed: Invalid credentials');
-      }
+      const res = await api.post('/users/login', { email, password });
+      setAuthToken(res.data.token);
+      onLogin(res.data.user);
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-    } finally {
-      setLoading(false);
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8 }}>
+      <Typography variant="h5" mb={2}>Login</Typography>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email:</label>
-          <input 
-            type="email" 
-            value={emailId} 
-            onChange={(e) => setEmailId(e.target.value)} 
-            required 
-            disabled={loading}
-          />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            disabled={loading}
-          />
-        </div>
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+        <TextField label="Email" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} />
+        <TextField label="Password" type="password" fullWidth margin="normal" value={password} onChange={e => setPassword(e.target.value)} />
+        {error && <Typography color="error">{error}</Typography>}
+        <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>Login</Button>
       </form>
-    </div>
+    </Box>
   );
-};
-
-export default Login;
+}

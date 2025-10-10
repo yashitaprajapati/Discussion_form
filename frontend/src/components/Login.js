@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { api } from '../App';
+import axios from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { setAuthToken } from '../api';
-
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -12,7 +11,10 @@ export default function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/user/login', { emailId: email, password });
+      const res = await axios.post(
+        'http://localhost:3000/api/user/login',
+        { emailId: email, password }
+      );
       setAuthToken(res.data.token);
       onLogin(res.data.user);
     } catch (err) {

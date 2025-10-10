@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../api';
+import axios from '../api';
 import { useParams } from 'react-router-dom';
 import { Typography, Box, Card, CardContent } from '@mui/material';
 import CommentList from './CommentList';
@@ -9,7 +9,7 @@ export default function ThreadDetail() {
   const [thread, setThread] = useState(null);
 
   useEffect(() => {
-    api.get(`/threads/${id}`).then(res => setThread(res.data));
+    axios.get(`http://localhost:3000/api/threads/${id}`).then(res => setThread(res.data));
   }, [id]);
 
   if (!thread) return <Typography>Loading...</Typography>;

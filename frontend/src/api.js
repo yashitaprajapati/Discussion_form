@@ -1,14 +1,11 @@
 import axios from 'axios';
 
-export const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // <-- Backend port and /api prefix
-  withCredentials: true,
-});
+export default axios;
 
 export const setAuthToken = (token) => {
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`; // <-- Fixed backticks
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
-    delete api.defaults.headers.common['Authorization'];
+    delete axios.defaults.headers.common['Authorization'];
   }
 };

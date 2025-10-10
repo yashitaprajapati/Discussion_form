@@ -6,15 +6,15 @@ import Login from './components/Login';
 import Register from './components/Register';
 import { AppBar, Toolbar, Button, Typography } from '@mui/material';
 import Profile  from './pages/Profile'
-import axios from 'axios';
 
 
-const API_URL = 'http://localhost:5000'; // Change if your backend runs on another port
 
-export const api = axios.create({
-  baseURL: API_URL,
-  withCredentials: true,
-});
+// // const API_URL = 'http://localhost:5000'; // Change if your backend runs on another port
+
+// export const api = axios.create({
+//   baseURL: API_URL,
+//   withCredentials: true,
+// });
 function App() {
   const [user, setUser] = useState(null);
 

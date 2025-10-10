@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from '../App';
+import axios from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 export default function Register({ onRegister }) {
@@ -11,11 +11,17 @@ export default function Register({ onRegister }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const [firstName, lastName] = name.split(' ');
-      const res = await api.post('/user/register', { firstName, lastName, emailId: email, password });
-      onRegister(res.data.user);
+      const [firstName, lastName = ''] = name.split(' ');
+      const res = await axios.post('http://localhost:3000/api/user/register', {
+        firstName,
+        lastName,
+        emailId: email,
+        password
+      });
+      if (onRegister) onRegister(res.data);
     } catch (err) {
-      setError('Registration failed');
+      console.error(err.response?.data || err); // backend error
+      setError(err.response?.data?.message || 'Registration failed');
     }
   };
 

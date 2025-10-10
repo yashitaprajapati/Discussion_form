@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../api';
+import axios from '../api';
 import { Typography, Box, Card, CardContent, TextField, Button } from '@mui/material';
 
 export default function CommentList({ threadId }) {
@@ -7,12 +7,16 @@ export default function CommentList({ threadId }) {
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    api.get(`/comments/thread/${threadId}`).then(res => setComments(res.data));
+    axios.get(`http://localhost:3000/api/comments/thread/${threadId}`)
+      .then(res => setComments(res.data));
   }, [threadId]);
 
   const handleAddComment = async () => {
     if (!content) return;
-    const res = await api.post(`/comments/${threadId}`, { comments: content });
+    const res = await axios.post(
+      `http://localhost:3000/api/comments/${threadId}`,
+      { comments: content }
+    );
     setComments([...comments, res.data.comment]);
     setContent('');
   };

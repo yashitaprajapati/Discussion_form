@@ -6,27 +6,36 @@ import Register from './components/Register';
 import { AppBar, Toolbar, Button, Typography } from '@mui/material';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
+import axios from './api';
 
 function App() {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
-  // Save user to localStorage whenever it changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('user');
-    }
-  }, [user]);
+  const [user, setUser] = useState(null);
 
   const token = sessionStorage.getItem('token');
-  const User = token ? JSON.parse(sessionStorage.getItem('user') || '{}') : null;
+
+  // Fetch user data from backend when token changes
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (token) {
+        try {
+          const res = await axios.get('/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUser(res.data);
+        } catch (err) {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+    fetchUser();
+  }, [token]);
 
   const handleLogout = () => {
     sessionStorage.clear();
+    localStorage.clear();
+    setUser(null);
     window.location.reload();
   };
 
@@ -36,10 +45,15 @@ function App() {
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>Forum App</Typography>
           <Button color="inherit" component={Link} to="/home">Home</Button>
+          <Button color="inherit" component={Link} to="/profile">Profile</Button>
           {!token && <Button color="inherit" component={Link} to="/login">Login</Button>}
           {!token && <Button color="inherit" component={Link} to="/register">Register</Button>}
-          {token && <Button color="inherit" component={Link} to="/profile">{user?.emailId || user?.name}</Button>}
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+          {token && (
+            <Button color="inherit" component={Link} to="/profile">
+              {user?.email || user?.name || 'Profile'}
+            </Button>
+          )}
+          {token && <Button color="inherit" onClick={handleLogout}>Logout</Button>}
         </Toolbar>
       </AppBar>
       <Routes>

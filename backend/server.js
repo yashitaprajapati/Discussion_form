@@ -19,10 +19,16 @@ const userRouter = require("./routes/userRouter");
 const threadRouter = require("./routes/threadRouter");
 const voteRoutes = require('./routes/vote.routes');
 const commentRoutes = require('./routes/comment.routes');
+const { getThreads, createThread, getThreadById } = require('./controllers/threadController');
+const { authMiddleware } = require('./middlewares/authMiddleware');
 app.use("/api/user",userRouter);
 app.use("/api/vote", voteRoutes);
 app.use("/api/comments",commentRoutes);
-app.use("/api/threads", threadRouter);
+// Use MongoDB-based thread routes
+app.get("/api/threads", authMiddleware, getThreads);
+app.get("/api/threads/:id", authMiddleware, getThreadById);
+app.post("/api/threads", authMiddleware, createThread);
+app.use("/api/threads", threadRouter); // Keep for other routes like upvote/downvote if needed
 
 connectDB();
 

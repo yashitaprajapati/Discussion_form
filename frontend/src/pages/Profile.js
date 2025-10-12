@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Avatar } from '@mui/material';
+import { Box, Typography, Avatar, Divider } from '@mui/material';
 
 export default function Profile({ user }) {
   if (!user) {
@@ -9,10 +9,19 @@ export default function Profile({ user }) {
   return (
     <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8, textAlign: 'center' }}>
       <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}>
-        {user.name ? user.name[0].toUpperCase() : '?'}
+        {user.firstName ? user.firstName[0].toUpperCase() : '?'}
       </Avatar>
-      <Typography variant="h5">{user.name}</Typography>
-      <Typography variant="body1">{user.email}</Typography>
+      <Typography variant="h5">{user.firstName} {user.lastName}</Typography>
+      <Typography variant="body1">{user.emailId}</Typography>
+      <Divider sx={{ my: 2 }} />
+      {/* Show all user fields except password */}
+      {Object.entries(user).map(([key, value]) =>
+        key !== 'password' && (
+          <Typography key={key} variant="body2">
+            <strong>{key}:</strong> {String(value)}
+          </Typography>
+        )
+      )}
     </Box>
   );
 }

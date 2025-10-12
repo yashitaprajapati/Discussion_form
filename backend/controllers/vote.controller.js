@@ -1,6 +1,7 @@
 
 const vote = require('../models/vote.model');
 const User = require('../models/userModel');
+const Thread = require('../models/threadModel');
 
 exports.votePosts = async (req,res)=>{
     try{
@@ -23,17 +24,21 @@ exports.votePosts = async (req,res)=>{
                 type_of_vote: "post",
                 type_id: postID
             });
+            // Decrement upvotes
+            await Thread.findByIdAndUpdate(postID, { $inc: { upvotes: -1 } });
             return res.status(200).json(`Post like removed by ${existingUser.emailId}!`);
         }
-    
+
     const newPostVote = new vote({
         userID:userID,
         type_of_vote:"post",
         type_id:postID
     });
     await newPostVote.save();
+    // Increment upvotes
+    await Thread.findByIdAndUpdate(postID, { $inc: { upvotes: 1 } });
     return res.status(200).json(`Post Liked by ${existingUser.emailId}!`);
-    
+
     }catch(err){
         console.log(err);
         return res.status(400).json(err);

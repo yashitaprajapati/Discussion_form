@@ -1,27 +1,35 @@
 import React, { useState } from 'react';
 import axios from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-export default function Register({ onRegister }) {
+export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const [firstName, lastName = ''] = name.split(' ');
-      const res = await axios.post('http://localhost:3000/api/user/register', {
-        firstName,
-        lastName,
-        emailId: email,
-        password
-      });
-      if (onRegister) onRegister(res.data);
+      const res = await axios.post(
+        'http://localhost:3000/api/user/register',
+        { firstName, lastName, emailId: email, password }
+      );
+      if (res.data.message && res.status === 200) {
+        navigate('/login');
+      } else {
+        setError(res.data.message || 'Registration failed');
+      }
     } catch (err) {
-      console.error(err.response?.data || err); // backend error
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Registration failed'
+      );
     }
   };
 

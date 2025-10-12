@@ -25,7 +25,6 @@ export default function Home() {
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h4" mb={2}>All Threads</Typography>
       {error && <Typography color="error">{error}</Typography>}
       <ThreadList threads={threads} />
     </Box>

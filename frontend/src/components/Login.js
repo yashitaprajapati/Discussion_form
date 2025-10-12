@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
 import axios from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
-import { setAuthToken } from '../api';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login({ onLogin }) {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const res = await axios.post(
         'http://localhost:3000/api/user/login',
         { emailId: email, password }
       );
-      setAuthToken(res.data.token);
-      onLogin(res.data.user);
+      if (res.data.token) {
+        sessionStorage.setItem('token', res.data.token);
+        navigate('/home');
+      } else {
+        setError(res.data.message || 'Login failed');
+      }
     } catch (err) {
-      setError('Invalid credentials');
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Login failed'
+      );
     }
   };
 

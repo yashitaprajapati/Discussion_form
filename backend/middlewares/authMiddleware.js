@@ -22,7 +22,7 @@ const authMiddleware = async (req, res, next) => {
         req.user = {
             id: userFind._id,
             emailId: userFind.emailId,
-            role: userFind.role  // 👈 confirm ho gaya
+            role: userFind.role  
         };
 
         next();
